@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title> Index</title>
+  <meta name="description" content="A small demo page with interactive elements, theme toggle and a contact form." />
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --text:#e6eef8;
+      --accent:#60a5fa;
+      --muted:#98a8bf;
+      --glass: rgba(255,255,255,0.03);
+    }
+    [data-theme="light"]{
+      --bg: #f5f8fb;
+      --card: #ffffff;
+      --text: #0b1220;
+      --accent: #2563eb;
+      --muted:#475569;
+      --glass: rgba(11,18,32,0.04);
+    }
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+    body{background:linear-gradient(180deg,var(--bg),#081226 80%);color:var(--text);display:flex;align-items:center;justify-content:center;padding:2rem;}
+    .container{width:100%;max-width:980px;}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;gap:1rem}
+    .brand{display:flex;gap:.75rem;align-items:center}
+    .logo{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#7dd3fc);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--card);box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    h1{font-size:1.125rem;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:.95rem}
+    nav{display:flex;gap:.5rem}
+    button, .btn{background:var(--card);color:var(--text);border:1px solid rgba(255,255,255,0.04);padding:.5rem .75rem;border-radius:8px;cursor:pointer}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:1rem}
+    .mainCard{background:var(--card);padding:1rem;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.5)}
+    .aside{display:flex;flex-direction:column;gap:.8rem}
+    .card{background:var(--glass);padding:.75rem;border-radius:8px}
+    .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;margin-top:.6rem}
+    .quote{font-size:0.95rem;line-height:1.4}
+    footer{margin-top:.85rem;color:var(--muted);font-size:.85rem;text-align:center}
+    form{display:flex;flex-direction:column;gap:.6rem}
+    input,textarea{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:.6rem;border-radius:8px;color:var(--text);resize:vertical}
+    small.error{color:#fca5a5}
+    .muted{color:var(--muted);font-size:.85rem}
+    @media (max-width:880px){
+      .grid{grid-template-columns:1fr;}.cards{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">RD</div>
+        <div>
+          <h1>Random Demo</h1>
+          <p class="lead">A simple index page with small interactive bits</p>
+        </div>
+      </div>
+
+      <nav>
+        <button id="themeToggle" title="Toggle theme">Toggle theme</button>
+        <button id="randomize">Random quote</button>
+      </nav>
+    </header>
+
+    <main class="grid" role="main">
+      <section class="mainCard" aria-labelledby="welcomeTitle">
+        <h2 id="welcomeTitle">Welcome</h2>
+        <p class="muted">This page demonstrates a tiny, self-contained index.html you can extend.</p>
+
+        <div class="card" style="margin-top:.8rem">
+          <strong>Quote</strong>
+          <p id="quote" class="quote">Click "Random quote" to get a friendly line.</p>
+        </div>
+
+        <div class="cards" style="margin-top:1rem">
+          <div class="card">
+            <strong>Info</strong>
+            <p class="muted">Local theme is saved to localStorage. Form validates client-side.</p>
+          </div>
+          <div class="card">
+            <strong>Tip</strong>
+            <p class="muted">Resize the window to see the responsive layout.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:1rem" class="card">
+          <strong>Contact</strong>
+          <form id="contactForm" novalidate>
+            <input id="name" type="text" placeholder="Your name" required />
+            <input id="email" type="email" placeholder="Email" required />
+            <textarea id="message" rows="4" placeholder="Message" required></textarea>
+            <small id="formError" class="error" aria-live="polite" hidden></small>
+            <div style="display:flex;gap:.5rem;margin-top:.5rem">
+              <button type="submit" class="btn">Send</button>
+              <button type="button" id="clear" class="btn">Clear</button>
+            </div>
+            <div id="formSuccess" class="muted" style="margin-top:.5rem" hidden>Message saved locally (demo).</div>
+          </form>
+        </div>
+      </section>
+
+      <aside class="aside" aria-label="Sidebar">
+        <div class="card">
+          <strong>Actions</strong>
+          <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.6rem">
+            <button id="copyQuote" class="btn">Copy quote</button>
+            <button id="showTime" class="btn">Show local time</button>
+          </div>
+        </div>
+
+        <div class="card" id="timeCard" style="min-height:56px;display:flex;align-items:center;justify-content:center">
+          <span id="timeText" class="muted">--:--:--</span>
+        </div>
+
+        <div class="card">
+          <strong>About</strong>
+          <p class="muted" style="margin:0.4rem 0 0">Small static demo — no server required.</p>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      Built for a random index.html demo — GitHub Copilot
+    </footer>
+  </div>
+
+  <script>
+    // small client-side interactions
+    (function(){
+      const quotes = [
+        "Simplicity is the soul of efficiency.",
+        "Write code that humans can read.",
+        "Small demos lead to big ideas.",
+        "Refactor often; ship confidently.",
+        "Make it work, then make it right."
+      ];
+
+      const el = id => document.getElementById(id);
+      const body = document.body;
+      const themeToggle = el('themeToggle');
+      const randomize = el('randomize');
+      const quoteEl = el('quote');
+      const copyBtn = el('copyQuote');
+      const showTime = el('showTime');
+      const timeText = el('timeText');
+      const contactForm = el('contactForm');
+      const formError = el('formError');
+      const formSuccess = el('formSuccess');
+      const clearBtn = el('clear');
+
+      function setQuote(text){ quoteEl.textContent = text; }
+
+      function randomQuote(){
+        const idx = Math.floor(Math.random()*quotes.length);
+        setQuote(quotes[idx]);
+      }
+
+      // theme
+      const themeKey = 'rd-demo-theme';
+      function applyTheme(t){ body.setAttribute('data-theme', t); localStorage.setItem(themeKey,t); themeToggle.textContent = t === 'dark' ? 'Light' : 'Dark'; }
+      const saved = localStorage.getItem(themeKey) || 'dark';
+      applyTheme(saved);
+
+      themeToggle.addEventListener('click', ()=> applyTheme(body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+      randomize.addEventListener('click', randomQuote);
+      copyBtn.addEventListener('click', async ()=>{
+        try{
+          await navigator.clipboard.writeText(quoteEl.textContent);
+          copyBtn.textContent = 'Copied';
+          setTimeout(()=> copyBtn.textContent = 'Copy quote',1200);
+        }catch(e){
+          copyBtn.textContent = 'Copy failed';
+          setTimeout(()=> copyBtn.textContent = 'Copy quote',1200);
+        }
+      });
+
+      showTime.addEventListener('click', ()=> {
+        const now = new Date();
+        timeText.textContent = now.toLocaleTimeString();
+      });
+
+      // form: basic client-side validation + save to localStorage (demo)
+      contactForm.addEventListener('submit', (ev)=>{
+        ev.preventDefault();
+        formError.hidden = true;
+        formSuccess.hidden = true;
+        const name = el('name').value.trim();
+        const email = el('email').value.trim();
+        const message = el('message').value.trim();
+        if(!name || !email || !message){
+          formError.textContent = 'Please fill in all fields.';
+          formError.hidden = false;
+          return;
+        }
+        if(!/^\S+@\S+\.\S+$/.test(email)){
+          formError.textContent = 'Please enter a valid email address.';
+          formError.hidden = false;
+          return;
+        }
+        // save demo
+        const savedMsgs = JSON.parse(localStorage.getItem('rd-demo-messages') || '[]');
+        savedMsgs.push({name,email,message,ts:Date.now()});
+        localStorage.setItem('rd-demo-messages', JSON.stringify(savedMsgs));
+        formSuccess.hidden = false;
+        contactForm.reset();
+      });
+
+      clearBtn.addEventListener('click', ()=> {
+        contactForm.reset();
+        formError.hidden = true;
+        formSuccess.hidden = true;
+      });
+
+      // initialize with a quote
+      randomQuote();
+
+      // small accessibility: focus outline visible on keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Tab') document.body.classList.add('show-focus');
+      });
+    })();
+  </script>
+</body>
+</html>
